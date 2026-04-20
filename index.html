@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pranjal Patil — Project Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@300;400;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:#08090e;color:#c8d8e8;font-family:'Barlow',sans-serif;overflow-x:hidden;cursor:none;}
+#cur{position:fixed;width:7px;height:7px;border-radius:50%;background:#f5a623;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);box-shadow:0 0 10px #f5a623;}
+#cur2{position:fixed;width:28px;height:28px;border-radius:50%;border:1px solid rgba(245,166,35,.35);pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:left .12s,top .12s;}
+#loader{position:fixed;inset:0;z-index:10000;background:#04050a;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 1.2s,visibility 1.2s;}
+#loader.out{opacity:0;visibility:hidden;pointer-events:none;}
+.ld-name{font-family:'Barlow Condensed',sans-serif;font-size:clamp(44px,8vw,88px);font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#fff;clip-path:inset(0 100% 0 0);animation:clipIn 1s .4s cubic-bezier(.77,0,.18,1) forwards;}
+.ld-sub{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.4em;text-transform:uppercase;color:rgba(245,166,35,.6);margin-top:12px;opacity:0;animation:fadeIn .6s 1.2s forwards;}
+.ld-bar{width:200px;height:1px;background:rgba(255,255,255,.08);margin-top:36px;overflow:hidden;}
+.ld-fill{height:100%;width:0;background:#f5a623;animation:barFill 2s .3s ease forwards;}
+@keyframes clipIn{to{clip-path:inset(0 0% 0 0);}}
+@keyframes fadeIn{to{opacity:1;}}
+@keyframes barFill{to{width:100%;}}
+nav{position:fixed;top:0;left:0;right:0;z-index:500;padding:22px 56px;display:flex;align-items:center;justify-content:space-between;transition:background .4s,padding .3s;}
+nav.solid{background:rgba(8,9,14,.96);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.04);padding:14px 56px;}
+.nav-logo{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#f5a623;text-decoration:none;}
+.nav-links{display:flex;gap:36px;list-style:none;}
+.nav-links a{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:rgba(200,220,235,.35);text-decoration:none;transition:color .2s;}
+.nav-links a:hover{color:#fff;}
+#hero{position:relative;height:100vh;min-height:600px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;}
+#city-canvas{position:absolute;top:0;left:0;width:100%;height:100%;display:block;}
+.h-ot{position:absolute;top:0;left:0;right:0;height:25%;background:linear-gradient(to bottom,rgba(8,9,14,.4),transparent);pointer-events:none;z-index:2;}
+.h-ob{position:absolute;bottom:0;left:0;right:0;height:55%;background:linear-gradient(to top,rgba(8,9,14,1) 0%,rgba(8,9,14,.5) 50%,transparent 100%);pointer-events:none;z-index:2;}
+#veil{position:absolute;inset:0;background:rgba(8,9,14,0);pointer-events:none;z-index:3;}
+.hero-text{position:relative;z-index:10;padding:0 60px 76px;max-width:860px;}
+.h-lbl{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.35em;text-transform:uppercase;color:rgba(255,255,255,.4);display:flex;align-items:center;gap:14px;margin-bottom:16px;opacity:0;animation:fadeIn .6s 2.6s forwards;}
+.h-lbl::before{content:'';width:28px;height:1px;background:rgba(255,255,255,.25);}
+h1{font-family:'Barlow Condensed',sans-serif;font-size:clamp(60px,9vw,136px);font-weight:800;letter-spacing:.04em;text-transform:uppercase;line-height:.88;color:#fff;text-shadow:0 2px 40px rgba(0,0,0,.5);clip-path:inset(0 100% 0 0);animation:clipIn 1.1s 2.8s cubic-bezier(.77,0,.18,1) forwards;}
+.h-role{font-family:'Barlow Condensed',sans-serif;font-size:clamp(14px,1.9vw,21px);font-weight:400;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-top:14px;margin-bottom:24px;opacity:0;animation:fadeIn .5s 3.4s forwards;}
+.h-pills{display:flex;gap:8px;flex-wrap:wrap;opacity:0;animation:fadeIn .5s 3.7s forwards;}
+.hpill{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;padding:5px 12px;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.4);backdrop-filter:blur(4px);}
+.scue{position:absolute;right:56px;bottom:30px;z-index:10;display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0;animation:fadeIn .5s 4.2s forwards;}
+.scue span{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.25);}
+.sline{width:1px;height:36px;background:rgba(255,255,255,.1);overflow:hidden;position:relative;}
+.sline::after{content:'';position:absolute;top:-100%;left:0;width:100%;height:100%;background:rgba(255,255,255,.7);animation:sdrop 1.8s 4.5s ease infinite;}
+@keyframes sdrop{0%{top:-100%;}100%{top:200%;}}
+#content{background:#08090e;}
+.rule{border:none;border-top:1px solid rgba(255,255,255,.05);}
+.wrap{max-width:1080px;margin:0 auto;padding:104px 60px;}
+.s-lbl{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.4em;text-transform:uppercase;color:rgba(245,166,35,.65);margin-bottom:10px;}
+.s-ttl{font-family:'Barlow Condensed',sans-serif;font-size:clamp(36px,5vw,66px);font-weight:700;letter-spacing:.02em;text-transform:uppercase;line-height:.92;color:#fff;margin-bottom:60px;}
+.rv{opacity:0;transition:opacity .8s ease,transform .8s ease;}
+.rv-u{transform:translateY(34px);}.rv-l{transform:translateX(-28px);}.rv-r{transform:translateX(28px);}
+.rv.in{opacity:1;transform:none;}
+.ag{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:start;}
+.ab{font-size:16px;font-weight:300;line-height:1.9;color:rgba(185,212,230,.65);}
+.ab p{margin-bottom:20px;}.ab p:last-child{margin-bottom:0;}
+.ab strong{color:rgba(255,255,255,.82);font-weight:500;}
+.ltag-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:24px;}
+.ltag{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;padding:4px 10px;border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.28);}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(255,255,255,.05);}
+.sbox{background:#08090e;padding:26px 22px;transition:background .25s;}
+.sbox:hover{background:rgba(255,255,255,.02);}
+.sv{font-family:'Barlow Condensed',sans-serif;font-size:44px;font-weight:700;color:#f5a623;line-height:1;margin-bottom:5px;}
+.sl{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:rgba(180,210,230,.28);}
+.mq-band{overflow:hidden;border-top:1px solid rgba(255,255,255,.04);padding:24px 0;}
+.mq-track{display:flex;width:max-content;animation:mqAnim 34s linear infinite;}
+.mq-item{display:flex;align-items:center;gap:14px;padding:0 28px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.16);white-space:nowrap;transition:color .2s;}
+.mq-item:hover{color:rgba(255,255,255,.45);}
+.mq-sep{width:3px;height:3px;border-radius:50%;background:rgba(245,166,35,.4);flex-shrink:0;}
+@keyframes mqAnim{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+.exp-list{border-top:1px solid rgba(255,255,255,.05);}
+.exp-row{display:grid;grid-template-columns:200px 1fr;gap:44px;padding:42px 0;border-bottom:1px solid rgba(255,255,255,.05);transition:background .25s;}
+.exp-row:hover{background:rgba(255,255,255,.012);}
+.ed{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.15em;color:rgba(245,166,35,.55);text-transform:uppercase;margin-bottom:6px;}
+.ec{font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:#fff;margin-bottom:3px;}
+.el{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.12em;color:rgba(255,255,255,.18);}
+.er{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:rgba(245,166,35,.5);margin-bottom:14px;}
+.eb{list-style:none;}
+.eb li{font-size:14px;font-weight:300;color:rgba(175,206,226,.6);line-height:1.78;padding-left:18px;position:relative;margin-bottom:8px;}
+.eb li::before{content:'—';position:absolute;left:0;color:rgba(245,166,35,.3);font-size:11px;}
+.eb li strong{color:rgba(218,234,246,.82);font-weight:500;}
+.sk-index{display:flex;flex-direction:column;}
+.sk-index-row{
+  display:grid;
+  grid-template-columns:40px 1fr 130px 100px;
+  align-items:center;gap:20px;
+  padding:20px 0;
+  border-bottom:1px solid rgba(255,255,255,.05);
+  transition:background .2s,padding .2s;
+  cursor:default;
+}
+.sk-index-row:first-child{border-top:1px solid rgba(255,255,255,.05);}
+.sk-index-row:hover{background:rgba(255,255,255,.018);padding-left:8px;}
+.sk-index-num{
+  font-family:'IBM Plex Mono',monospace;font-size:10px;
+  letter-spacing:.15em;color:rgba(245,166,35,.4);flex-shrink:0;
+}
+.sk-index-name{
+  font-family:'Barlow Condensed',sans-serif;font-size:20px;
+  font-weight:600;letter-spacing:.04em;text-transform:uppercase;
+  color:rgba(210,232,248,.75);transition:color .2s;
+}
+.sk-index-row:hover .sk-index-name{color:#fff;}
+.sk-index-cat{
+  font-family:'IBM Plex Mono',monospace;font-size:9px;
+  letter-spacing:.15em;text-transform:uppercase;
+  color:rgba(245,166,35,.38);text-align:right;white-space:nowrap;
+}
+.sk-index-line{
+  height:1px;background:rgba(255,255,255,.06);
+  overflow:hidden;position:relative;min-width:60px;
+}
+.sk-index-fill{
+  position:absolute;left:0;top:0;height:100%;width:0;
+  background:linear-gradient(90deg,rgba(245,166,35,.7),rgba(245,166,35,.15));
+  transition:width 1.1s cubic-bezier(.4,0,.2,1);
+}
+.sk-index-fill.lit{width:100%;}
+.proj-list{border-top:1px solid rgba(255,255,255,.05);}
+.proj-row{display:grid;grid-template-columns:260px 1fr 100px;gap:44px;align-items:start;padding:40px 0;border-bottom:1px solid rgba(255,255,255,.05);transition:background .25s;}
+.proj-row:hover{background:rgba(255,255,255,.012);}
+.pn{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em;color:rgba(245,166,35,.4);text-transform:uppercase;margin-bottom:8px;}
+.pt{font-family:'Barlow Condensed',sans-serif;font-size:21px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#fff;line-height:1.1;}
+.pb{font-size:13px;font-weight:300;color:rgba(168,202,224,.55);line-height:1.72;}
+.ptags{display:flex;flex-wrap:wrap;gap:5px;margin-top:12px;}
+.ptag{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;padding:3px 8px;border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.22);}
+.pkpi{text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:700;color:#f5a623;white-space:nowrap;line-height:1;}
+.pkpi small{display:block;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:400;letter-spacing:.12em;text-transform:uppercase;color:rgba(245,166,35,.35);margin-top:4px;}
+.edu-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(255,255,255,.05);margin-bottom:56px;}
+.edu-card{background:#08090e;padding:32px 28px;transition:background .25s;}
+.edu-card:hover{background:rgba(255,255,255,.018);}
+.esc{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:#fff;margin-bottom:5px;}
+.edg{font-size:13px;font-weight:300;color:rgba(170,205,228,.48);line-height:1.5;margin-bottom:16px;}
+.echips{display:flex;gap:7px;flex-wrap:wrap;}
+.echip{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;padding:4px 10px;}
+.echip.g{border:1px solid rgba(245,166,35,.22);color:rgba(245,166,35,.65);}
+.echip.n{border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.22);}
+.cert-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.05);}
+.cert-card{background:#08090e;padding:22px 20px;transition:background .25s;}
+.cert-card:hover{background:rgba(255,255,255,.018);}
+.cico{font-size:18px;margin-bottom:9px;}
+.cn{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:#fff;margin-bottom:3px;line-height:1.2;}
+.ciss{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.18);margin-bottom:9px;}
+.cs{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;}
+.cs.ok{color:rgba(74,222,128,.7);}.cs.ok::before{content:'● ';font-size:7px;}
+.cs.pend{color:rgba(245,166,35,.6);}.cs.pend::before{content:'○ ';font-size:7px;}
+#contact{padding:130px 60px;text-align:center;background:radial-gradient(ellipse 70% 45% at 50% 100%,rgba(245,120,20,.07),transparent),#08090e;position:relative;z-index:1;}
+.ct-lbl{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.4em;text-transform:uppercase;color:rgba(245,166,35,.55);margin-bottom:14px;}
+.ct-ttl{font-family:'Barlow Condensed',sans-serif;font-size:clamp(48px,7.5vw,104px);font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:#fff;line-height:.88;margin-bottom:18px;}
+.ct-sub{font-size:15px;font-weight:300;color:rgba(170,205,228,.48);max-width:400px;margin:0 auto 40px;line-height:1.75;}
+.ct-links{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
+.ctlink{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.025);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:rgba(195,220,236,.38);text-decoration:none;transition:border-color .2s,color .2s,background .2s;}
+.ctlink:hover{border-color:rgba(245,166,35,.4);color:#f5a623;background:rgba(245,166,35,.05);}
+footer{border-top:1px solid rgba(255,255,255,.04);padding:20px 60px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+.fc{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.14em;color:rgba(255,255,255,.14);}
+.fs{display:flex;align-items:center;gap:7px;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.14em;color:rgba(245,166,35,.45);}
+.fdot{width:5px;height:5px;border-radius:50%;background:#4ade80;box-shadow:0 0 7px rgba(74,222,128,.9);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.2;}}
+@media(max-width:860px){
+  nav,nav.solid{padding:13px 20px;}.nav-links{display:none;}
+  .hero-text,.wrap,#contact{padding-left:22px;padding-right:22px;}
+  .hero-text{padding-bottom:50px;}
+  .ag,.sk-cats,.edu-grid{grid-template-columns:1fr;}
+  .sk-index-row{
+    grid-template-columns:32px 1fr auto;
+    gap:12px;
+  }
+  .sk-index-line{display:none;}
+  .sk-index-cat{font-size:8px;letter-spacing:.1em;}
+  .exp-row{grid-template-columns:1fr;gap:10px;}
+  .proj-row{grid-template-columns:1fr;gap:8px;}.pkpi{text-align:left;}
+  .cert-grid{grid-template-columns:1fr 1fr;}
+  .sgrid{grid-template-columns:1fr 1fr;}
+  footer{padding:16px 20px;}
+}
+@media(max-width:440px){.cert-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div id="cur"></div>
+<div id="cur2"></div>
+
+<div id="loader">
+  <div class="ld-name">Pranjal Patil</div>
+  <div class="ld-sub">Construction · Project Management · Boston</div>
+  <div class="ld-bar"><div class="ld-fill"></div></div>
+</div>
+
+<nav id="nav">
+  <a href="#hero" class="nav-logo">PP</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<section id="hero">
+  <canvas id="city-canvas"></canvas>
+  <div class="h-ot"></div>
+  <div class="h-ob"></div>
+  <div id="veil"></div>
+  <div class="hero-text">
+    <div class="h-lbl">Construction &amp; Project Management · Boston, MA</div>
+    <h1>Pranjal<br>Patil</h1>
+    <div class="h-role">MS Project Management &nbsp;·&nbsp; Civil Engineer &nbsp;·&nbsp; 3+ Years</div>
+    <p class="h-tagline">Field-tested on 62km of highway.<br>Sharpened at Northeastern.<br>Ready to build.</p>
+    <div class="h-pills">
+      <span class="hpill">OSHA 30-Hour</span>
+      <span class="hpill">CMIT-1</span>
+      <span class="hpill">GPA 3.88</span>
+    </div>
+  </div>
+  <div class="scue"><span>Scroll</span><div class="sline"></div></div>
+</section>
+
+<div id="content">
+
+<section id="about">
+  <div class="wrap">
+    <div class="s-lbl rv rv-u">About</div>
+    <h2 class="s-ttl rv rv-u">From Field<br>to PMO</h2>
+    <div class="ag">
+      <div class="ab rv rv-l">
+        <p>I'm a <strong>construction project manager</strong> with a civil engineering foundation and an MS from Northeastern University. My work spans highway infrastructure, municipal systems, and commercial builds — real projects with real stakes.</p>
+        <p>What sets me apart is the combination of <strong>field credibility and modern tech fluency</strong>. I've coordinated 13+ subcontractors across a 62km highway and built AI tools that cut OSHA documentation time by 70%.</p>
+        <p>Based in <strong>Boston, MA</strong> on F-1 OPT, targeting APM and Project Engineer roles across Massachusetts and the US.</p>
+        <div class="ltag-row">
+          <span class="ltag">English</span><span class="ltag">Hindi</span><span class="ltag">Marathi</span><span class="ltag">Spanish (Basic)</span>
+        </div>
+      </div>
+      <div class="sgrid rv rv-r">
+        <div class="sbox"><div class="sv" data-count="3" data-suffix="+">0</div><div class="sl">Years Exp</div></div>
+        <div class="sbox"><div class="sv" data-count="25" data-prefix="$" data-suffix="M+">0</div><div class="sl">Project Value</div></div>
+        <div class="sbox"><div class="sv" data-count="388" data-decimal>0</div><div class="sl">MS GPA</div></div>
+        <div class="sbox"><div class="sv" data-count="62" data-suffix="km">0</div><div class="sl">Highway</div></div>
+        <div class="sbox"><div class="sv" data-count="13" data-suffix="+">0</div><div class="sl">Subcontractors</div></div>
+        <div class="sbox"><div class="sv" data-count="70" data-suffix="%">0</div><div class="sl">Doc Saved via AI</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<div class="mq-band">
+  <div class="mq-track">
+    <div class="mq-item">NH-48 Highway<span class="mq-sep"></span></div>
+    <div class="mq-item">C.V. Patil &amp; Associates<span class="mq-sep"></span></div>
+    <div class="mq-item">B.N.C Power Projects<span class="mq-sep"></span></div>
+    <div class="mq-item">Samrat Buildcon<span class="mq-sep"></span></div>
+    <div class="mq-item">Northeastern University<span class="mq-sep"></span></div>
+    <div class="mq-item">Alnylam Pharmaceuticals<span class="mq-sep"></span></div>
+    <div class="mq-item">Green Line Extension<span class="mq-sep"></span></div>
+    <div class="mq-item">Sapientia AI<span class="mq-sep"></span></div>
+    <div class="mq-item">Skanska<span class="mq-sep"></span></div>
+    <div class="mq-item">Turner Construction<span class="mq-sep"></span></div>
+    <div class="mq-item">Kiewit<span class="mq-sep"></span></div>
+    <div class="mq-item">MassDOT<span class="mq-sep"></span></div>
+    <div class="mq-item">Walsh Group<span class="mq-sep"></span></div>
+    <div class="mq-item">OSHA 300/301<span class="mq-sep"></span></div>
+    <div class="mq-item">NH-48 Highway<span class="mq-sep"></span></div>
+    <div class="mq-item">C.V. Patil &amp; Associates<span class="mq-sep"></span></div>
+    <div class="mq-item">B.N.C Power Projects<span class="mq-sep"></span></div>
+    <div class="mq-item">Samrat Buildcon<span class="mq-sep"></span></div>
+    <div class="mq-item">Northeastern University<span class="mq-sep"></span></div>
+    <div class="mq-item">Alnylam Pharmaceuticals<span class="mq-sep"></span></div>
+    <div class="mq-item">Green Line Extension<span class="mq-sep"></span></div>
+    <div class="mq-item">Sapientia AI<span class="mq-sep"></span></div>
+    <div class="mq-item">Skanska<span class="mq-sep"></span></div>
+    <div class="mq-item">Turner Construction<span class="mq-sep"></span></div>
+    <div class="mq-item">Kiewit<span class="mq-sep"></span></div>
+    <div class="mq-item">MassDOT<span class="mq-sep"></span></div>
+    <div class="mq-item">Walsh Group<span class="mq-sep"></span></div>
+    <div class="mq-item">OSHA 300/301<span class="mq-sep"></span></div>
+  </div>
+</div>
+
+<hr class="rule">
+
+<section id="experience">
+  <div class="wrap">
+    <div class="s-lbl rv rv-u">Track Record</div>
+    <h2 class="s-ttl rv rv-u">Experience</h2>
+    <div class="exp-list">
+      <div class="exp-row rv rv-u">
+        <div><div class="ed">Jul 2023 – Sep 2024</div><div class="ec">C.V. Patil &amp;<br>Associates</div><div class="el">Pune, India</div></div>
+        <div>
+          <div class="er">Assistant Project Coordinator · Municipal Infrastructure</div>
+          <ul class="eb">
+            <li>Managed submittals, bid packages, and contract documents — full procurement lifecycle from bid distribution through award. <strong>10% improvement in delivery efficiency.</strong></li>
+            <li>Tracked schedules, change orders, and payment evaluations while liaising with contractors and municipal departments.</li>
+            <li>Caught <strong>$50K+ in billing variances</strong> on a $15M project through detailed cost estimate and drawing reviews.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="exp-row rv rv-u">
+        <div><div class="ed">Jun 2022 – May 2023</div><div class="ec">B.N.C Power<br>Projects</div><div class="el">Pune, India</div></div>
+        <div>
+          <div class="er">Field Engineer · Highway NH-48 (62km)</div>
+          <ul class="eb">
+            <li>Led site inspections across a 62km corridor with <strong>13+ subcontractors</strong>. <strong>15% reduction in project delays.</strong></li>
+            <li>Topographical surveys, grade calculations, and as-built verification against contract documents.</li>
+            <li>Real-time coordination of roadway and utility installations with direct client communication.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="exp-row rv rv-u">
+        <div><div class="ed">May 2021 – Feb 2022</div><div class="ec">Samrat<br>Buildcon</div><div class="el">Pune, India</div></div>
+        <div>
+          <div class="er">Graduate Project Intern · Commercial Infrastructure</div>
+          <ul class="eb">
+            <li>Contract preparation, bidding support, site coordination and compliance documentation.</li>
+            <li>Payment estimation and site monitoring. <strong>30% documentation efficiency improvement.</strong></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section id="skills">
+  <div class="wrap">
+    <div class="s-lbl rv rv-u">Capabilities</div>
+    <h2 class="s-ttl rv rv-u">Skills &amp; Tools</h2>
+    <div class="sk-index">
+
+```
+  <div class="sk-index-row rv rv-u">
+    <div class="sk-index-num">01</div>
+    <div class="sk-index-name">Submittal &amp; RFI Management</div>
+    <div class="sk-index-cat">Project Coordination</div>
+    <div class="sk-index-line"><div class="sk-index-fill" data-delay="0"></div></div>
+  </div>
+
+  <div class="sk-index-row rv rv-u">
+    <div class="sk-index-num">02</div>
+    <div class="sk-index-name">Schedule Tracking &amp; Control</div>
+    <div class="sk-index-cat">Project Coordination</div>
+    <div class="sk-index-line"><div class="sk-index-fill" data-delay="60"></div></div>
+  </div>
+
+  <div class="sk-index-row rv rv-u">
+    <div class="sk-index-num">03</div>
+    <div class="sk-index-name">Cost Estimation &amp; Budgeting</div>
+    <div class="sk-index-cat">Project Coordination</div>
+    <div class="sk-index-line"><div class="sk-index-fill" data-delay="120"></div></div>
+  </div>
+
+  <div class="sk-index-row rv rv-u">
+    <div class="sk-index-num">04</div>
+    <div class="sk-index-name">Change Order &amp; Contract Admin</div>
+    <div class="sk-index-cat">Project Coordination</div>
+    <div class="sk-index-line"><div class="sk-index-fill" data-delay="180"></div></div>
+  </div>
+
+  <div class="sk-index-row rv rv-u">
+    <div class="sk-index-num">05</div>
+    <div class="sk-index-name">Site Inspection &amp; Quality Control</div>
+    <div class="sk-index-cat">Field &amp; Site</div>
+    <div class="sk-index-line"><div class="sk-index-fill" data-delay="240"></div></div>
+  </div>
+
+  <div class="sk-index-row rv rv-u">
+    <div class="sk-index-num">06</div>
+    <div class="sk-index-name">Construction Drawing Interpretation</div>
+    <div class="sk-index-cat">Field &amp; Site</div>
+    <div class="sk-index-line"><div class="sk-index-fill" data-delay="300"></div></div>
+  </div>
+
+  <div class="sk-index-row rv rv-u">
+    <div class="sk-index-num">07</div>
+    <div class="sk-index-name">MS Project &amp; Advanced Excel</div>
+    <div class="sk-index-cat">Software</div>
+    <div class="sk-index-line"><div class="sk-index-fill" data-delay="360"></div></div>
+  </div>
+
+  <div class="sk-index-row rv rv-u">
+    <div class="sk-index-num">08</div>
+    <div class="sk-index-name">AutoCAD &amp; Bluebeam Revu</div>
+    <div class="sk-index-cat">Software</div>
+    <div class="sk-index-line"><div class="sk-index-fill" data-delay="420"></div></div>
+  </div>
+
+  <div class="sk-index-row rv rv-u">
+    <div class="sk-index-num">09</div>
+    <div class="sk-index-name">Python · LangChain · Claude API</div>
+    <div class="sk-index-cat">AI &amp; Tech</div>
+    <div class="sk-index-line"><div class="sk-index-fill" data-delay="480"></div></div>
+  </div>
+
+  <div class="sk-index-row rv rv-u">
+    <div class="sk-index-num">10</div>
+    <div class="sk-index-name">Stakeholder &amp; Client Communication</div>
+    <div class="sk-index-cat">Leadership</div>
+    <div class="sk-index-line"><div class="sk-index-fill" data-delay="540"></div></div>
+  </div>
+
+</div>
+```
+
+  </div>
+</section>
+
+<hr class="rule">
+
+<section id="projects">
+  <div class="wrap">
+    <div class="s-lbl rv rv-u">Key Builds</div>
+    <h2 class="s-ttl rv rv-u">Projects &amp;<br>Case Studies</h2>
+    <div class="proj-list">
+      <div class="proj-row rv rv-u">
+        <div><div class="pn">01 · AI / Safety Tech</div><div class="pt">Sapientia — AI Safety Reporting Agent</div></div>
+        <div><div class="pb">LangChain + Claude API converts worker narratives into OSHA 300/301. Auto-classifies severity, dispatches real-time alerts. Streamlit + FastAPI. Live demo available.</div><div class="ptags"><span class="ptag">Python</span><span class="ptag">LangChain</span><span class="ptag">Claude API</span><span class="ptag">FastAPI</span><span class="ptag">OSHA</span></div></div>
+        <div class="pkpi">~70%<small>Doc Time Saved</small></div>
+      </div>
+      <div class="proj-row rv rv-u">
+        <div><div class="pn">02 · Capstone</div><div class="pt">Alnylam — Enterprise CI Program</div></div>
+        <div><div class="pb">Led Team Kaizen designing a budget-neutral CI program for Alnylam Pharmaceuticals. Full IPP across 4 phases using PDCA and Agile retrospectives.</div><div class="ptags"><span class="ptag">PDCA</span><span class="ptag">Agile Retros</span><span class="ptag">Sprint Planning</span><span class="ptag">IPP</span></div></div>
+        <div class="pkpi">4<small>Phases Delivered</small></div>
+      </div>
+      <div class="proj-row rv rv-u">
+        <div><div class="pn">03 · Case Study</div><div class="pt">Green Line Extension WBS</div></div>
+        <div><div class="pb">Full WBS and WBS Dictionary for Boston's $2.3B Metro GLX. Root cause analysis of the original $1B+ cost overrun.</div><div class="ptags"><span class="ptag">WBS / WBSD</span><span class="ptag">Scope Mgmt</span><span class="ptag">Risk Analysis</span></div></div>
+        <div class="pkpi">$2.3B<small>Project Scale</small></div>
+      </div>
+      <div class="proj-row rv rv-u">
+        <div><div class="pn">04 · Platform</div><div class="pt">SafeComm — Field Safety App</div></div>
+        <div><div class="pb">Mobile safety platform — hazard reporting, toolbox talks, role-based checklists. 7 deliverables with full UX flow.</div><div class="ptags"><span class="ptag">Mobile UX</span><span class="ptag">OSHA Framework</span></div></div>
+        <div class="pkpi"></div>
+      </div>
+      <div class="proj-row rv rv-u">
+        <div><div class="pn">05 · Contract Law</div><div class="pt">AIA A101-2017 Redline Suite</div></div>
+        <div><div class="pb">AIA A101-2017 redlines, change order requests, mediation statements, mechanics lien memos, and verbal agreement risk analysis.</div><div class="ptags"><span class="ptag">AIA A101-2017</span><span class="ptag">Change Orders</span><span class="ptag">Mediation</span></div></div>
+        <div class="pkpi"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section id="education">
+  <div class="wrap">
+    <div class="s-lbl rv rv-u">Academic Background</div>
+    <h2 class="s-ttl rv rv-u">Education</h2>
+    <div class="edu-grid">
+      <div class="edu-card rv rv-l">
+        <div class="esc">Northeastern University</div>
+        <div class="edg">Master of Science in Project Management<br>Construction Management Concentration</div>
+        <div class="echips"><span class="echip g">GPA 3.88</span><span class="echip n">April 2026</span><span class="echip n">Boston, MA</span></div>
+      </div>
+      <div class="edu-card rv rv-r">
+        <div class="esc">Savitribai Phule Pune University</div>
+        <div class="edg">Bachelor of Science in Civil Engineering</div>
+        <div class="echips"><span class="echip g">GPA 3.8</span><span class="echip n">May 2022</span><span class="echip n">Pune, India</span></div>
+      </div>
+    </div>
+    <div class="s-lbl rv rv-u">Credentials</div>
+    <div class="cert-grid">
+      <div class="cert-card rv rv-u"><div class="cico">🦺</div><div class="cn">OSHA 30-Hour Construction</div><div class="ciss">US Dept of Labor</div><div class="cs ok">Active</div></div>
+      <div class="cert-card rv rv-u"><div class="cico">📋</div><div class="cn">CMIT-1</div><div class="ciss">Construction Management</div><div class="cs ok">Active</div></div>
+      <div class="cert-card rv rv-u"><div class="cico">🚗</div><div class="cn">MA Driver's License</div><div class="ciss">Commonwealth of MA</div><div class="cs ok">Valid</div></div>
+      <div class="cert-card rv rv-u"><div class="cico">⚙️</div><div class="cn">Engineer-in-Training (EIT)</div><div class="ciss">NCEES</div><div class="cs pend">Scheduled 2027</div></div>
+      <div class="cert-card rv rv-u"><div class="cico">🏗️</div><div class="cn">Procore Certification</div><div class="ciss">Procore Technologies</div><div class="cs pend">In Progress</div></div>
+      <div class="cert-card rv rv-u"><div class="cico">🎓</div><div class="cn">MS Project Management</div><div class="ciss">Northeastern — GPA 3.88</div><div class="cs ok">Completed 2026</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="ct-lbl rv rv-u">Get in Touch</div>
+  <h2 class="ct-ttl rv rv-u">Let's Build<br>Something.</h2>
+  <p class="ct-sub rv rv-u">Open to APM, Project Engineer, and construction roles across Massachusetts and the US.</p>
+  <div class="ct-links rv rv-u">
+    <a href="mailto:patil.pranj@northeastern.edu" class="ctlink">✉ patil.pranj@northeastern.edu</a>
+    <a href="tel:+18572646291" class="ctlink">☎ +1 (857) 264-6291</a>
+    <a href="https://www.linkedin.com/in/pranjalpatil919" target="_blank" class="ctlink">in LinkedIn</a>
+  </div>
+</section>
+
+<footer>
+  <div class="fc">© 2026 Pranjal Sanjay Patil — Boston, MA</div>
+  <div class="fs"><div class="fdot"></div>Open to Opportunities</div>
+</footer>
+
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* CURSOR */
+var cur=document.getElementById('cur'),cur2=document.getElementById('cur2');
+var mx=200,my=200,rx=200,ry=200;
+document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;});
+function ca(){cur.style.left=mx+'px';cur.style.top=my+'px';rx+=(mx-rx)*.1;ry+=(my-ry)*.1;cur2.style.left=rx+'px';cur2.style.top=ry+'px';requestAnimationFrame(ca);}
+ca();
+
+/* LOADER */
+window.addEventListener('load',function(){setTimeout(function(){document.getElementById('loader').classList.add('out');},2500);});
+
+/* NAV */
+window.addEventListener('scroll',function(){document.getElementById('nav').classList.toggle('solid',window.scrollY>40);},{passive:true});
+
+/* VEIL */
+window.addEventListener('scroll',function(){
+  var h=document.getElementById('hero').offsetHeight||window.innerHeight;
+  document.getElementById('veil').style.background='rgba(8,9,14,'+Math.min(1,window.scrollY/h)*0.8+')';
+},{passive:true});
+
+/* CITY CANVAS */
+var C=document.getElementById('city-canvas');
+var X=C.getContext('2d');
+var W=0,H=0,T=0;
+var WC=[];
+
+var BL=[
+  [0.000,0.030,0.30,0],[0.032,0.016,0.18,1],[0.050,0.046,0.55,2],
+  [0.098,0.015,0.23,0],[0.115,0.040,0.47,1],[0.157,0.012,0.15,0],
+  [0.171,0.034,0.68,2],[0.207,0.013,0.21,1],[0.222,0.013,0.17,0],
+  [0.237,0.060,0.84,0],[0.299,0.013,0.25,1],[0.314,0.048,0.61,2],
+  [0.364,0.015,0.19,0],[0.381,0.042,0.50,1],[0.425,0.015,0.29,2],
+  [0.442,0.058,0.88,0],[0.502,0.011,0.15,1],[0.515,0.015,0.23,0],
+  [0.532,0.048,0.66,2],[0.582,0.013,0.21,1],[0.597,0.050,0.56,0],
+  [0.649,0.015,0.17,1],[0.666,0.056,0.70,2],[0.724,0.015,0.27,0],
+  [0.741,0.042,0.48,1],[0.785,0.015,0.19,0],[0.802,0.054,0.62,2],
+  [0.858,0.017,0.28,1],[0.877,0.038,0.42,0],[0.917,0.013,0.17,1],
+  [0.932,0.050,0.52,2],[0.984,0.016,0.18,0]
+];
+
+function buildWC(){
+  WC=[];
+  for(var i=0;i<BL.length;i++){
+    var b=BL[i];
+    var bw=Math.max(5,W*b[1]);
+    var bh=(H*0.65)*b[2];
+    var cols=Math.max(2,Math.floor(bw/8));
+    var rows=Math.max(2,Math.floor(bh/11));
+    var ws=[];
+    for(var r=0;r<rows;r++)
+      for(var c=0;c<cols;c++)
+        ws.push({on:(((i*7+r*13+c*17)%10)>3),warm:(((i+r+c)%4)!==0),fl:(((i*3+r*7+c*11)%12)===0),ph:Math.random()*6.28});
+    WC.push({cols:cols,rows:rows,ws:ws});
+  }
+}
+
+function resize(){W=C.width=C.offsetWidth;H=C.height=C.offsetHeight;buildWC();}
+
+function lerp(a,b,t){return a+(b-a)*t;}
+function lC(c1,c2,t){return[lerp(c1[0],c2[0],t),lerp(c1[1],c2[1],t),lerp(c1[2],c2[2],t)];}
+function rgb(c){return'rgb('+Math.round(c[0])+','+Math.round(c[1])+','+Math.round(c[2])+')';}
+
+var SKY=[
+  {t:0.00,top:[95,155,215],bot:[155,195,230]},
+  {t:0.22,top:[205,135,55],bot:[235,185,85]},
+  {t:0.42,top:[155,65,18],bot:[205,105,35]},
+  {t:0.62,top:[55,22,12],bot:[110,45,18]},
+  {t:1.00,top:[5,8,14],bot:[9,14,24]}
+];
+
+function skyC(p){
+  var a=SKY[0],b=SKY[SKY.length-1];
+  for(var i=0;i<SKY.length-1;i++){if(p>=SKY[i].t&&p<=SKY[i+1].t){a=SKY[i];b=SKY[i+1];break;}}
+  var f=(p-a.t)/Math.max(0.001,b.t-a.t);
+  return{top:lC(a.top,b.top,f),bot:lC(a.bot,b.bot,f)};
+}
+
+function getP(){var h=document.getElementById('hero').offsetHeight||H;return Math.min(1,Math.max(0,window.scrollY/h));}
+
+function draw(){
+  T++;
+  var p=getP();
+  var sc=skyC(p);
+  X.clearRect(0,0,W,H);
+
+  /* sky */
+  var sg=X.createLinearGradient(0,0,0,H*0.74);
+  sg.addColorStop(0,rgb(sc.top));sg.addColorStop(1,rgb(sc.bot));
+  X.fillStyle=sg;X.fillRect(0,0,W,H);
+
+  /* clouds */
+  if(p<0.45){
+    var ca2=Math.max(0,0.45-p)*0.55;
+    X.save();X.globalAlpha=ca2;
+    [[0.10,0.20,1.3],[0.35,0.14,1.0],[0.60,0.19,1.5],[0.80,0.16,0.9]].forEach(function(d){
+      var cx=((d[0]*W+T*0.14)%(W*1.3))-W*0.15,cy=H*d[1],s=d[2];
+      X.fillStyle='rgba(255,255,255,0.52)';
+      [[0,0,38*s],[28*s,-9*s,28*s],[-22*s,6*s,26*s],[52*s,4*s,24*s],[-48*s,9*s,20*s]].forEach(function(o){X.beginPath();X.arc(cx+o[0],cy+o[1],o[2],0,Math.PI*2);X.fill();});
+    });
+    X.restore();
+  }
+
+  /* sun */
+  var sx=W*0.70,sy=H*0.08+H*0.74*Math.pow(p,1.0),sr=lerp(24,5,p),sa=Math.max(0,1-p*1.5);
+  if(sa>0.005){
+    var g3=X.createRadialGradient(sx,sy,sr,sx,sy,sr*13);
+    g3.addColorStop(0,'rgba(255,195,70,'+sa*0.22+')');g3.addColorStop(0.45,'rgba(255,120,25,'+sa*0.1+')');g3.addColorStop(1,'rgba(255,50,0,0)');
+    X.fillStyle=g3;X.fillRect(0,0,W,H);
+    var g2=X.createRadialGradient(sx,sy,sr*0.3,sx,sy,sr*3.2);
+    g2.addColorStop(0,'rgba(255,238,155,'+sa*0.75+')');g2.addColorStop(1,'rgba(255,145,25,0)');
+    X.beginPath();X.arc(sx,sy,sr*3.2,0,Math.PI*2);X.fillStyle=g2;X.fill();
+    var gd=X.createRadialGradient(sx-sr*0.2,sy-sr*0.2,0,sx,sy,sr);
+    gd.addColorStop(0,'rgba(255,255,225,'+sa+')');gd.addColorStop(0.6,'rgba(255,228,115,'+sa*0.95+')');gd.addColorStop(1,'rgba(255,155,35,'+sa*0.8+')');
+    X.beginPath();X.arc(sx,sy,sr,0,Math.PI*2);X.fillStyle=gd;X.fill();
+    if(p<0.18){
+      var ra=(1-p/0.18)*0.10;X.save();X.globalAlpha=ra;X.strokeStyle='rgba(255,235,170,1)';X.lineWidth=1;
+      for(var ri=0;ri<12;ri++){var ang=(ri/12)*Math.PI*2+T*0.002;X.beginPath();X.moveTo(sx+Math.cos(ang)*sr*1.5,sy+Math.sin(ang)*sr*1.5);X.lineTo(sx+Math.cos(ang)*sr*5.5,sy+Math.sin(ang)*sr*5.5);X.stroke();}
+      X.restore();
+    }
+  }
+
+  /* haze */
+  if(p>0.08&&p<0.75){
+    var ha=Math.sin(p*Math.PI)*0.4;
+    var hg=X.createLinearGradient(0,H*0.35,0,H*0.72);
+    hg.addColorStop(0,'rgba(255,150,30,0)');hg.addColorStop(0.5,'rgba(255,110,15,'+ha*0.45+')');hg.addColorStop(1,'rgba(180,50,5,0)');
+    X.fillStyle=hg;X.fillRect(0,H*0.35,W,H*0.37);
+  }
+
+  /* stars + moon */
+  if(p>0.35){
+    var na=Math.min(1,(p-0.35)/0.65);
+    for(var ni=0;ni<200;ni++){
+      var nsx=((ni*127.3+ni*ni*0.38)%(W||1)),nsy=((ni*83.9+ni*5.7)%((H*0.66)||1));
+      var nsr=0.4+((ni*13)%10)/10*0.85,ntw=0.35+Math.sin(T*0.02+ni*1.1)*0.65,nsa=na*ntw;
+      if(nsa<0.015) continue;
+      X.beginPath();X.arc(nsx,nsy,nsr,0,Math.PI*2);
+      X.fillStyle=ni%7===0?'rgba(200,218,255,'+nsa*0.62+')':'rgba(255,255,255,'+nsa*0.68+')';X.fill();
+    }
+    if(na>0.12){
+      var ma2=Math.min(1,(na-0.12)/0.88),moonX=W*0.16,moonY=H*0.13,moonR=15;
+      var mg=X.createRadialGradient(moonX,moonY,0,moonX,moonY,moonR*3.4);
+      mg.addColorStop(0,'rgba(218,228,255,'+ma2*0.24+')');mg.addColorStop(1,'rgba(175,195,255,0)');
+      X.fillStyle=mg;X.fillRect(moonX-moonR*4,moonY-moonR*4,moonR*8,moonR*8);
+      X.beginPath();X.arc(moonX,moonY,moonR,0,Math.PI*2);X.fillStyle='rgba(232,238,255,'+ma2*0.88+')';X.fill();
+      X.beginPath();X.arc(moonX+moonR*0.44,moonY-moonR*0.18,moonR*0.86,0,Math.PI*2);X.fillStyle='rgba(5,8,14,'+ma2*0.94+')';X.fill();
+    }
+  }
+
+  /* buildings */
+  var gY=H*0.70;
+  for(var bi=0;bi<BL.length;bi++){
+    var b=BL[bi],bx=Math.round(W*b[0]),bw=Math.max(5,Math.round(W*b[1])),bh=Math.round((gY-8)*b[2]),by=gY-bh,type=b[3];
+    var fg=X.createLinearGradient(bx,by,bx+bw,by+bh);
+    if(type===2){
+      if(p<0.38){var sr2=1-p*2.5;fg.addColorStop(0,'rgba('+(95+sr2*38|0)+','+(138+sr2*38|0)+','+(188+sr2*28|0)+',0.92)');fg.addColorStop(0.5,'rgba('+(55+sr2*18|0)+','+(88+sr2*18|0)+','+(128+sr2*18|0)+',0.88)');fg.addColorStop(1,'rgba(28,42,62,0.92)');}
+      else{fg.addColorStop(0,'rgb('+(9+(bi*3)%8)+','+(14+(bi*5)%10)+','+(21+(bi*7)%12)+')');fg.addColorStop(1,'rgb('+(5+(bi*2)%6)+','+(9+(bi*4)%8)+','+(15+(bi*6)%10)+')');}
+    } else if(type===1){
+      fg.addColorStop(0,'rgb('+(20+(bi*5)%10)+','+(22+(bi*3)%8)+','+(26+(bi*7)%10)+')');fg.addColorStop(1,'rgb('+(14+(bi*3)%8)+','+(16+(bi*5)%8)+','+(20+(bi*7)%8)+')');
+    } else {
+      fg.addColorStop(0,'rgb('+(12+(bi*7)%8)+','+(14+(bi*3)%8)+','+(18+(bi*5)%10)+')');fg.addColorStop(1,'rgb('+(8+(bi*5)%6)+','+(10+(bi*7)%6)+','+(13+(bi*3)%8)+')');
+    }
+    X.fillStyle=fg;X.fillRect(bx,by,bw,bh+10);
+    if(p<0.45){var ea=(1-p*2.2)*0.055;if(ea>0){X.fillStyle='rgba(195,228,255,'+ea+')';X.fillRect(bx,by,1,bh);}}
+    if(b[2]>0.62&&bw>18){X.fillStyle='rgba(0,0,0,0.3)';X.fillRect(bx+Math.round(bw*0.1),by,Math.round(bw*0.8),Math.round(bh*0.11));}
+    var wci=WC[bi];
+    if(wci){
+      var wcols=wci.cols,wrows=wci.rows,ws=wci.ws;
+      var ww=Math.max(2,Math.floor(bw/wcols)-2),wh=Math.max(3,Math.floor(bh/wrows)-3);
+      var padX=(bw-wcols*(ww+2))*0.5,padY=type===2?4:7;
+      for(var wi=0;wi<ws.length;wi++){
+        var w=ws[wi],wc2=wi%wcols,wr=Math.floor(wi/wcols);
+        if(wc2>=wcols||wr>=wrows) continue;
+        var wwx=bx+padX+wc2*(ww+2),wwy=by+padY+wr*(wh+3);
+        if(p<0.28&&type===2){var refl=(0.28-p)/0.28*0.14;X.fillStyle='rgba(155,205,255,'+refl+')';X.fillRect(wwx,wwy,ww,wh);}
+        else if(p>0.18&&w.on){
+          var wa=Math.min(1,(p-0.18)/0.82)*0.7;
+          if(w.fl) wa*=(0.5+Math.sin(T*0.14+w.ph)*0.5);
+          if(wa>0.02){X.fillStyle=w.warm?'rgba(255,212,125,'+wa+')':'rgba(182,228,255,'+(wa*0.6)+')';X.fillRect(wwx,wwy,ww,wh);}
+        }
+      }
+    }
+    if(b[2]>0.56){
+      var antH=Math.round(bh*0.13),ax=bx+Math.round(bw*0.46);
+      X.strokeStyle='rgba(175,200,220,'+(0.14+p*0.07)+')';X.lineWidth=1;X.beginPath();X.moveTo(ax,by);X.lineTo(ax,by-antH);X.stroke();
+      if(p>0.28){var ba=(p-0.28)/0.72,blink=Math.sin(T*0.055+bi)>0.25?1:0;if(blink){X.beginPath();X.arc(ax,by-antH,2.2,0,Math.PI*2);X.fillStyle='rgba(255,36,36,'+ba*0.88+')';X.fill();var rg2=X.createRadialGradient(ax,by-antH,0,ax,by-antH,7);rg2.addColorStop(0,'rgba(255,36,36,'+ba*0.38+')');rg2.addColorStop(1,'rgba(255,36,36,0)');X.fillStyle=rg2;X.fillRect(ax-7,by-antH-7,14,14);}}
+    }
+  }
+
+  /* ground */
+  var gg=X.createLinearGradient(0,gY,0,H);
+  if(p<0.5){gg.addColorStop(0,'#181410');gg.addColorStop(1,'#0d0b08');}
+  else{gg.addColorStop(0,'#0b0f18');gg.addColorStop(1,'#060810');}
+  X.fillStyle=gg;X.fillRect(0,gY,W,H-gY);
+  var rra=0.05+p*0.03;X.strokeStyle='rgba(255,255,255,'+rra+')';X.lineWidth=1;
+  [0.18,0.45,0.72].forEach(function(f){X.beginPath();X.moveTo(0,gY+(H-gY)*f);X.lineTo(W,gY+(H-gY)*f);X.stroke();});
+  if(p>0.32){
+    var la=Math.min(1,(p-0.32)/0.68);
+    [0.07,0.17,0.30,0.44,0.56,0.68,0.79,0.91].forEach(function(xf){
+      var lx=W*xf,ly=gY+5;X.strokeStyle='rgba(110,120,132,'+la*0.38+')';X.lineWidth=1;X.beginPath();X.moveTo(lx,ly);X.lineTo(lx,ly+18);X.stroke();
+      var slg=X.createRadialGradient(lx,ly,0,lx,ly,28);slg.addColorStop(0,'rgba(255,218,115,'+la*0.32+')');slg.addColorStop(1,'rgba(255,175,55,0)');
+      X.fillStyle=slg;X.fillRect(lx-28,ly-12,56,40);X.beginPath();X.arc(lx,ly,2,0,Math.PI*2);X.fillStyle='rgba(255,238,175,'+la*0.88+')';X.fill();
+    });
+  }
+  if(p>0.5){
+    var ga=(p-0.5)/0.5;
+    for(var gi=0;gi<BL.length;gi++){var gb=BL[gi],gbx=W*gb[0],gbw=Math.max(5,W*gb[1]);var wg=X.createLinearGradient(0,gY,0,gY+35);wg.addColorStop(0,'rgba(255,185,90,'+ga*0.07+')');wg.addColorStop(1,'rgba(255,90,15,0)');X.fillStyle=wg;X.fillRect(gbx,gY,gbw,35);}
+  }
+  if(H-gY>55){
+    var wY=gY+(H-gY)*0.58,wHH=(H-gY)*0.4;
+    var wg2=X.createLinearGradient(0,wY,0,wY+wHH);
+    if(p<0.5){wg2.addColorStop(0,'rgba(75,115,155,0.38)');wg2.addColorStop(1,'rgba(45,85,120,0.18)');}
+    else{wg2.addColorStop(0,'rgba(8,18,38,0.55)');wg2.addColorStop(1,'rgba(4,10,22,0.28)');}
+    X.fillStyle=wg2;X.fillRect(0,wY,W,wHH);
+    if(p>0.28){var sha=(p-0.28)/0.72*0.28;for(var si=0;si<18;si++){var ssx=((si*W/18+T*(si%2===0?0.45:-0.35))%(W||1)),ssy=wY+((si*11)%(wHH||1));X.fillStyle='rgba(255,255,255,'+(sha*(0.25+((si*7)%10)/10*0.72))+')';X.fillRect(ssx,ssy,10+((si*5)%14),1);}}
+  }
+
+  requestAnimationFrame(draw);
+}
+
+resize();
+window.addEventListener('resize',function(){resize();},{passive:true});
+draw();
+
+/* REVEAL */
+document.querySelectorAll('.rv').forEach(function(el){
+  new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting) setTimeout(function(){e.target.classList.add('in');},50);});},{threshold:0.08}).observe(el);
+});
+
+/* SKILL LINES */
+document.querySelectorAll('.sk-index-fill').forEach(function(el){
+  new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        var delay=parseInt(el.dataset.delay)||0;
+        setTimeout(function(){el.classList.add('lit');},delay);
+      }
+    });
+  },{threshold:0.5}).observe(el);
+});
+
+/* COUNT UP */
+function countUp(el){
+  var raw=parseInt(el.dataset.count),isDec='decimal' in el.dataset,pre=el.dataset.prefix||'',suf=el.dataset.suffix||'',cur=0,inc=raw/60;
+  var ti=setInterval(function(){cur+=inc;if(cur>=raw){cur=raw;clearInterval(ti);}el.textContent=pre+(isDec?(cur/100).toFixed(2):Math.floor(cur))+suf;},20);
+}
+var sObs=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){e.target.querySelectorAll('[data-count]').forEach(countUp);sObs.unobserve(e.target);}});},{threshold:0.3});
+document.querySelectorAll('.sgrid').forEach(function(s){sObs.observe(s);});
+
+})();
+</script>
+
+</body>
+</html>
